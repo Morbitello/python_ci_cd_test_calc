@@ -1,0 +1,25 @@
+# Define the stages of the pipeline
+stages:
+  - test  # We only have a 'test' stage for now
+
+# Cache Python dependencies to speed up future builds
+cache:
+  paths:
+    - venv/
+    - ~/.cache/pip/
+
+# Test job
+test:
+  image: python:3.9  # Use Python 3.9 Docker image
+  stage: test  # This job runs in the 'test' stage
+  before_script:
+    - python -m venv venv  # Create a virtual environment
+    - source venv/bin/activate  # Activate the virtual environment
+    - pip install --upgrade pip  # Upgrade pip to the latest version
+    - pip install -r requirements.txt  # Install dependencies from requirements.txt
+  script:
+    - pytest  # Run the tests using pytest
+  artifacts:
+    paths:
+      - pytest-report.xml  # Save the test results
+    expire_in: 1 hour  # Keep the artifact for 1 hour
